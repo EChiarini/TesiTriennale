@@ -1,31 +1,29 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[78]:
+# In[ ]:
 
 
 import pandas as pd
 import os
 from os import listdir
 from os.path import isfile, join
-
+from tqdm import tqdm
 import numpy as np
 import re
+import shutil
 
 
-# In[79]:
+# In[ ]:
 
 
 SAMPLE_RATE = 13
 SAMPLE_FREQUENCY = round(1000/SAMPLE_RATE, 6)
 SAMPLE_FREQUENCY_STR = str(SAMPLE_FREQUENCY)
-
 script_dir = os.getcwd() + '/data/'
-#rel_path = "data/data.txt"
-#abs_file_path = os.path.join(script_dir, rel_path)
 
 
-# In[80]:
+# In[ ]:
 
 
 def inizializza():
@@ -45,7 +43,7 @@ def inizializza():
     print("Tutto ok")
 
 
-# In[81]:
+# In[ ]:
 
 
 # Import data as nested dictionary
@@ -73,7 +71,7 @@ def get_data(df_dict, user):
     return df_dict
 
 
-# In[82]:
+# In[ ]:
 
 
 # Preprocess data
@@ -117,7 +115,7 @@ def preprocess_data(df_dict):
 
 # ### Group Data With Sliding Window
 
-# In[83]:
+# In[ ]:
 
 
 def get_frames(data, frame_size, hop_size):
@@ -130,7 +128,7 @@ def get_frames(data, frame_size, hop_size):
 
 # ##### Calculate magnitude between data from the same IMU sensor
 
-# In[84]:
+# In[ ]:
 
 
 def calculate_magnitude(df_dict):
@@ -148,7 +146,7 @@ def calculate_magnitude(df_dict):
 
 # #### Raw data dataframe
 
-# In[85]:
+# In[ ]:
 
 
 # Merge raw data in single dataframe
@@ -162,7 +160,7 @@ def get_raw_data(df_dict):
 
 # ### Calculate 1% Range Over/In/Below Mean
 
-# In[86]:
+# In[ ]:
 
 
 def calc_over_in_below_mean(df, perc=0.01):
@@ -187,7 +185,7 @@ def calc_over_in_below_mean(df, perc=0.01):
 
 # ### Merge Data in Single DataFrame
 
-# In[87]:
+# In[ ]:
 
 
 # Merge all the dataframes into a single dataframe
@@ -209,7 +207,7 @@ def merge_data(df_dict):
 # * above/in/below range
 # 
 
-# In[88]:
+# In[ ]:
 
 
 def calculate_fft_energy(frame, signal_len, df_energy):
@@ -222,7 +220,7 @@ def calculate_fft_energy(frame, signal_len, df_energy):
     return df_energy
 
 
-# In[89]:
+# In[ ]:
 
 
 frame_size = SAMPLE_RATE*4  # Window:  4 seconds
@@ -270,7 +268,7 @@ def calculate_features(df_dict):
 
 # Write grouped data and raw data on file
 
-# In[91]:
+# In[ ]:
 
 
 users = [
@@ -286,10 +284,8 @@ users = [
      'User9',
  ]
 
-mypath_root = script_dir
 inizializza()
-for user in users:
-    print("User: " , user)
+for user in tqdm(users):
     df_dict = {}
     df_dict = get_data(df_dict, user)
     #df_dict = preprocess_data(df_dict)
@@ -297,6 +293,23 @@ for user in users:
     df_dict = calculate_magnitude(df_dict)
     df_data = calculate_features(df_dict)
     # Save the data
-    os.makedirs(mypath_root + "Processed_data", exist_ok=True)
-    df_data.to_csv(mypath_root + "Processed_data/" + 'grouped_data_' + user + '.csv')
+    os.makedirs(script_dir + "Processed_data", exist_ok=True)
+    df_data.to_csv(script_dir + "Processed_data/" + 'grouped_data_' + user + '.csv')
+
+
+# In[ ]:
+
+
+def cleanUp():
+  for item in os.listdir(script_dir):
+    item_path = os.path.join(script_dir, item)
+
+    if os.path.isdir(item_path) and re.fullmatch(r'User\d+', item):
+      shutil.rmtree(item_path)
+
+
+# In[ ]:
+
+
+cleanUp();
 
