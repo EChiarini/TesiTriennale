@@ -30,14 +30,7 @@ Usa le magnitudo ( legacy ), però vengono calcolate anche altre metrice per eve
 Assegnamento fisso del 20% di ogni utente alla fase di testing
 #### Dataset MultiPosition wearable
 Non usa i dati relativi al magnetometro  
-
-TESTING: 23 dati per ogni attivita' -> 7 minuti e 40 secondi di testing   
-TRAINING: 89 dati per ogni attivita' -> da 0 a 29 minuti e 40 secondi di training, con incremento di circa 84 secondi
 #### Dataset selfBack
-TESTING: 5 dati per ogni attivita' -> 3 minuti di testing  
-TRAINING: 20 dati per ogni attivita' -> da 0 a 12 minuti di training, con incremento di circa 34 secondi
 #### Dataset ?
-TESTING: ? dati per ogni attivita' -> ? minuti di testing  
-TRAINING: ? dati per ogni attivita' -> da 0 a ? minuti di training, con incremento di circa ? secondi
 ### DisplayResults.ipynb
 Genera grafici
