@@ -1,5 +1,5 @@
 # Tesi/Tirocinio Triennale Chiarini Emiliano
-### SetUpData.ipynb - MultiPosition wearable dataset
+### SetUpData.ipynb - MultiPosition Wearable dataset
 Link: https://zenodo.org/records/11219118  
 Caratteristiche:
 - 10 Utenti
@@ -25,12 +25,12 @@ Caratteristiche:
 - ? Hz di campionamento, 4 sec di finestre, 2 sec di hop
 ### AllCreateModelsInOneFile.ipynb
 Genera f1-score relativi ai modelli  
-Bilancia il dataset con il sotto-insieme di 'utente-posizione-attivita' minore  
 Usa le magnitudo ( legacy ), però vengono calcolate anche altre metrice per eventuali scopi futuri  
-Assegnamento fisso del 20% di ogni utente alla fase di testing
 #### Dataset MultiPosition wearable
-Non usa i dati relativi al magnetometro  
+Non usa i dati relativi al magnetometro
+Mettere il file scaricato(raw_data_all.csv) dentro la cartella `MultiPositionWearable_raw`
 #### Dataset selfBack
+Mettere le varie cartelle scaricate(t,w e wt) dentro la cartella `selfBACK_raw`
 #### Dataset ?
 ### DisplayResults.ipynb
 Genera grafici
