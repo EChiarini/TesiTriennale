@@ -26,6 +26,7 @@ Caratteristiche:
 ### AllCreateModelsInOneFile.ipynb
 Genera f1-score relativi ai modelli  
 Usa le magnitudo ( legacy ), però vengono calcolate anche altre metrice per eventuali scopi futuri  
+Eventuali parametri da modificare sono dentro il file `Configurazioni.txt`
 #### Dataset MultiPosition wearable
 Non usa i dati relativi al magnetometro  
 Mettere il file scaricato(raw_data_all.csv) dentro la cartella `MultiPositionWearable_raw`
