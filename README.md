@@ -28,9 +28,11 @@ Genera f1-score relativi ai modelli
 Usa le magnitudo ( legacy ), però vengono calcolate anche altre metrice per eventuali scopi futuri  
 Eventuali parametri da modificare sono dentro il file `Configurazioni.txt`
 #### Dataset MultiPosition wearable
+Dentro `Configurazioni.txt` ha il nome di `MultiPositionWearable`
 Non usa i dati relativi al magnetometro  
 Mettere il file scaricato(raw_data_all.csv) dentro la cartella `MultiPositionWearable_raw`
 #### Dataset selfBack
+Dentro `Configurazioni.txt` ha il nome di `selfBACK`
 Mettere le varie cartelle scaricate(t,w e wt) dentro la cartella `selfBACK_raw`
 #### Dataset ?
 ### DisplayResults.ipynb
