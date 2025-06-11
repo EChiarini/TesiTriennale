@@ -6,7 +6,7 @@ Caratteristiche:
 - 8 Posizioni
 - 3 Sensori ( Accelerometro, Giroscopio, Magnetometro )
 - 5 Attivita'
-- 13 Hz di campionamento, 4 sec di finestre, 2 sec di hop
+- 13 Hz di campionamento, 4 sec di finestre, 50% overlap
 ### SelfBACKAdapter.ipynb - selfBack
 Link: https://archive.ics.uci.edu/dataset/521/selfback  
 Caratteristiche:
@@ -14,15 +14,15 @@ Caratteristiche:
 - 2 Posizioni
 - 1 Sensore ( Accelerometro )
 - 9 Attivita'
-- 100 Hz di campionamento, 4 sec di finestre, 2 sec di hop
-### ?Adapter.ipynb - ?
-Link: ?  
+- 100 Hz di campionamento, 4 sec di finestre, 50% overlap
+### SDALLEAdapter.ipynb - SDALLE
+Link: https://zenodo.org/records/14841611
 Caratteristiche:
-- ? Utenti
-- ? Posizioni
-- ? Sensore ( ? )
-- ? Attivita'
-- ? Hz di campionamento, 4 sec di finestre, 2 sec di hop
+- 9 Utenti
+- 8 Posizioni
+- 2 Sensori ( Accelerometro, Giroscopio )
+- 4 Attivita'
+- 148 Hz di campionamento, 4 sec di finestre, 50% overlap
 ### AllCreateModelsInOneFile.ipynb
 Genera f1-score relativi ai modelli  
 Usa le magnitudo ( legacy ), però vengono calcolate anche altre metrice per eventuali scopi futuri  
@@ -34,6 +34,8 @@ Mettere il file scaricato(raw_data_all.csv) dentro la cartella `MultiPositionWea
 #### Dataset selfBack
 Dentro `Configurazioni.txt` ha il nome di `selfBACK`
 Mettere le varie cartelle scaricate(t,w e wt) dentro la cartella `selfBACK_raw`
-#### Dataset ?
+#### Dataset SDALLE
+Dentro `Configurazioni.txt` ha il nome di `SDALLE`
+Mettere i vari file scaricati dentro la cartella `SDALLE_raw`
 ### DisplayResults.ipynb
 Genera grafici
