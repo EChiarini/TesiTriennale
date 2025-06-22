@@ -293,7 +293,7 @@ def process_single_random_state(rand_state, current_position_list, df_data_arg, 
                     durata = end - start
 
                     tempoEffettivo = ROW_TIME_arg * (1 + (num_dati_spostati - 1) * (1 - OVERLAP_arg))
-                    tempoEffettivo = tempoEffettivo - (tempoEffettivo % 10) if tempoEffettivo % 10 <= 15 else tempoEffettivo
+                    tempoEffettivo = round(tempoEffettivo / 10) * 10
 
 
                     if len(y_test) == 0 or len(y_pred) == 0:
