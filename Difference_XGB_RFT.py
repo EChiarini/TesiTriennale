@@ -369,7 +369,7 @@ def k_fold_cross_validation_parallel(
 
 RANDOM_STATE_LIST = [1]
 MINUTE_LIST = [1,5]
-WEIGHT_LIST = [1,5]
+WEIGHT_LIST = [1,5,25]
 OVERLAP = 0.5
 ROW_TIME = 4
 SAVE = True
