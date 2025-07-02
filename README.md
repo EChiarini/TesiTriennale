@@ -1,5 +1,5 @@
 # Tesi/Tirocinio Triennale Chiarini Emiliano
-## Motivazione scelta del modello XGB su RFT
+## Motivazione scelta del modello XGB rispetto al modello RFT
 Far partire il file `Difference_XGB_RFT.py` tramite il comando (in questo caso io ho usato powershell)
 ```powershell
 foreach ($DATASET in "MultiPositionWearable", "selfBACK", "SDALLE") {
@@ -12,6 +12,20 @@ Nel caso si vogliano modificare i parametri, modificare:
 (386) RANDOM_STATE_LIST = [ ... ]
 (387) MINUTE_LIST = [ ... ]
 (388) WEIGHT_LIST = [ ... ]
+```
+## Motivazione scelta di pesare una riga rispetto a moltiplicarla N volte
+Far partire il file `Difference_MUL_PESO.py` tramite il comando (in questo caso io ho usato powershell)
+```powershell
+foreach ($DATASET in "MultiPositionWearable", "selfBACK", "SDALLE") {
+    python Difference_XGB_RFT.py $DATASET
+}
+```
+I risultati della comparazione saranno visibili nella cartella `/images/diff_peso_mul/NOME_DATASET/plot_X.png`  
+Nel caso si vogliano modificare i parametri, modificare:
+```python
+(356) RANDOM_STATE_LIST = [ ... ]
+(357) MINUTE_LIST = [ ... ]
+(358) WEIGHT_LIST = [ ... ]
 ```
 
 ## Creazione ed Analisi Modelli
