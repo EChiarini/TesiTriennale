@@ -1,5 +1,5 @@
 # Tesi/Tirocinio Triennale Chiarini Emiliano
-## Motivazione scelta del modello XGB rispetto al modello RFT
+## Motivazione scelta del modello XGB rispetto al modello RFT - OUTDATED
 Far partire il file `Difference_XGB_RFT.py` tramite il comando (in questo caso io ho usato powershell)
 ```powershell
 foreach ($DATASET in "MultiPositionWearable", "selfBACK", "SDALLE") {
@@ -10,10 +10,10 @@ I risultati della comparazione saranno visibili nella cartella `/images/differen
 Nel caso si vogliano modificare i parametri, modificare:
 ```python
 (386) RANDOM_STATE_LIST = [ ... ]
-(387) MINUTE_LIST = [ ... ]
+(387) SECONDS_LIST = [ ... ]
 (388) WEIGHT_LIST = [ ... ]
 ```
-## Motivazione scelta di pesare una riga rispetto a moltiplicarla N volte
+## Motivazione scelta di pesare una riga rispetto a moltiplicarla N volte - OUTDATED
 Far partire il file `Difference_MUL_PESO.py` tramite il comando (in questo caso io ho usato powershell)
 ```powershell
 foreach ($DATASET in "MultiPositionWearable", "selfBACK", "SDALLE") {
@@ -24,7 +24,7 @@ I risultati della comparazione saranno visibili nella cartella `/images/diff_pes
 Nel caso si vogliano modificare i parametri, modificare:
 ```python
 (356) RANDOM_STATE_LIST = [ ... ]
-(357) MINUTE_LIST = [ ... ]
+(357) SECONDS_LIST = [ ... ]
 (358) WEIGHT_LIST = [ ... ]
 ```
 
@@ -60,12 +60,16 @@ Eventuali parametri da modificare sono dentro il file `/Configurazioni.txt`
 #### Dataset MultiPosition wearable
 Dentro `Configurazioni.txt` ha il nome di `MultiPositionWearable`  
 Non usa i dati relativi al magnetometro  
-Mettere il file scaricato(raw_data_all.csv) dentro la cartella `/data/MultiPositionWearable_raw/`
+Mettere il file scaricato(raw_data_all.csv) dentro la cartella `/data/MultiPositionWearable_raw/`  
+Range di `SECONDS_LIST` in `/Configurazioni.txt` : `4 - 170`, a multipli di 2
 #### Dataset selfBack
 Dentro `Configurazioni.txt` ha il nome di `selfBACK`  
-Mettere le varie cartelle scaricate(t,w e wt) dentro la cartella `/data/selfBACK_raw/`
+Mettere le varie cartelle scaricate(t,w e wt) dentro la cartella `/data/selfBACK_raw/`  
+Range di `SECONDS_LIST` in `/Configurazioni.txt` : `4 - 40`, a multipli di 2
 #### Dataset SDALLE
 Dentro `Configurazioni.txt` ha il nome di `SDALLE`  
-Mettere i vari file scaricati dentro la cartella `/data/SDALLE_raw/`
+Mettere i vari file scaricati dentro la cartella `/data/SDALLE_raw/`  
+Range di `SECONDS_LIST` in `/Configurazioni.txt` : `4 - 20`, a multipli di 2
 ### DisplayResults.ipynb
-Genera le immagini dei grafici della cartella `/images/`
+Genera le immagini dei grafici nella cartella `/images/andamento_modelli/dataset di riferimento`  
+Per ora genera i grafici relativi al guadagno assoluto e relativo(rispetto al peso 1) 
