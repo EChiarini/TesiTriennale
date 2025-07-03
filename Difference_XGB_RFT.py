@@ -754,7 +754,7 @@ for position_to_plot in df_all_data['position'].unique():
 
     fig.tight_layout()
 
-    output_dir = os.path.join(os.getcwd(), 'images','differenza tra modelli', DATASET)
+    output_dir = os.path.join(os.getcwd(), 'images','diff_xgb_rft', DATASET)
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, f'plot_{position_to_plot}.png')
     plt.savefig(output_path, dpi=150)
