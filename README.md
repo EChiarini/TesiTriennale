@@ -29,14 +29,6 @@ Nel caso si vogliano modificare i parametri, modificare:
 ```
 
 ## Creazione ed Analisi Modelli
-### SetUpData.ipynb - MultiPosition Wearable dataset
-Link: https://zenodo.org/records/11219118  
-Caratteristiche:
-- 10 Utenti
-- 8 Posizioni
-- 3 Sensori ( Accelerometro, Giroscopio, Magnetometro )
-- 5 Attivita'
-- 13 Hz di campionamento, 4 sec di finestre, 50% overlap
 ### SelfBACKAdapter.ipynb - selfBack
 Link: https://archive.ics.uci.edu/dataset/521/selfback  
 Caratteristiche:
@@ -56,12 +48,7 @@ Caratteristiche:
 ### AllCreateModelsInOneFile.ipynb
 Genera f1-score relativi ai modelli  
 Usa le magnitudo ( legacy ), però vengono calcolate anche altre metrice per eventuali scopi futuri  
-Eventuali parametri da modificare sono dentro il file `/Configurazioni.txt`
-#### Dataset MultiPosition wearable
-Dentro `Configurazioni.txt` ha il nome di `MultiPositionWearable`  
-Non usa i dati relativi al magnetometro  
-Mettere il file scaricato(raw_data_all.csv) dentro la cartella `/data/MultiPositionWearable_raw/`  
-Range di `SECONDS_LIST` in `/Configurazioni.txt` : `4 - 170`, a multipli di 2
+Eventuali parametri da modificare sono dentro il file `/Configurazioni.txt`  
 #### Dataset selfBack
 Dentro `Configurazioni.txt` ha il nome di `selfBACK`  
 Mettere le varie cartelle scaricate(t,w e wt) dentro la cartella `/data/selfBACK_raw/`  
