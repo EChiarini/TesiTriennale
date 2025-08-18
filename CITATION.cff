@@ -1,0 +1,19 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: ' Importance Factor in sensor-based HAR'
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Emiliano
+    family-names: Chiarini
+    email: emiliano40017@gmail.com
+identifiers:
+  - type: url
+    value: >-
+      https://gitlab.com/echiarini1/TesiTriennale/-/tree/20276fb251782e40fb4184bd62b8be6b9063ca6c/
+repository-code: 'https://gitlab.com/echiarini1/TesiTriennale'
+url: 'https://gitlab.com'
