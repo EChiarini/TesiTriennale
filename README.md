@@ -1,5 +1,5 @@
 # Tesi/Tirocinio Triennale Chiarini Emiliano
-## Motivazione scelta del modello XGB rispetto al modello RFT - OUTDATED
+## Motivazione scelta del modello XGB rispetto al modello RFT
 Far partire il file `Difference_XGB_RFT.py` tramite il comando (in questo caso io ho usato powershell)
 ```powershell
 foreach ($DATASET in "selfBACK", "SDALLE") {
@@ -13,7 +13,7 @@ Nel caso si vogliano modificare i parametri, modificare:
 (387) SECONDS_LIST = [ ... ]
 (388) WEIGHT_LIST = [ ... ]
 ```
-## Motivazione scelta di pesare una riga rispetto a moltiplicarla N volte - OUTDATED
+## Motivazione scelta di pesare una riga rispetto a moltiplicarla N volte
 Far partire il file `Difference_MUL_PESO.py` tramite il comando (in questo caso io ho usato powershell)
 ```powershell
 foreach ($DATASET in "selfBACK", "SDALLE") {
