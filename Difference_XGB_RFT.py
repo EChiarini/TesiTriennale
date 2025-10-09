@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
 import pandas as pd
 import math
 import numpy as np
@@ -32,22 +26,14 @@ import matplotlib.ticker as ticker
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-
-# # CREAZIONE MODELLI
-
-# In[ ]:
-
-
 def get_features_for_each_sensor_optimized(df_data_input, positions_list):
     if not positions_list or df_data_input.empty:
         return pd.DataFrame()
 
     grouping_keys = ['Userid', 'label']
-    # Colonne da escludere dalla ridenominazione delle feature
     meta_cols_to_exclude_from_rename = ['label', 'position', 'Userid','Activity']
 
     all_processed_group_dfs = []
-    # Itera su ogni gruppo (Userid, label)
     for (uid, lbl), group_df in df_data_input.groupby(grouping_keys, observed=False):
         processed_dfs_for_group_concat = []
         labels_columns_for_mask_group = []
@@ -55,13 +41,12 @@ def get_features_for_each_sensor_optimized(df_data_input, positions_list):
         min_len_for_group_alignment = float('inf')
         temp_pos_dfs_for_group = {}
 
-        #trova la lunghezza minima tra le posizioni
         actual_positions_in_group = [p for p in positions_list if p in group_df['position'].unique()]
         if len(actual_positions_in_group) != len(positions_list):
             #non vuoi entrare qui
             continue 
 
-        for position_val in actual_positions_in_group: # Usa actual_positions_in_group
+        for position_val in actual_positions_in_group:
             df_pos_filtered_group = group_df[group_df['position'] == position_val]
             temp_pos_dfs_for_group[position_val] = df_pos_filtered_group
             if len(df_pos_filtered_group) < min_len_for_group_alignment:
@@ -91,7 +76,6 @@ def get_features_for_each_sensor_optimized(df_data_input, positions_list):
 
         df_group_final_wide = pd.concat(processed_dfs_for_group_concat, axis=1)
 
-        # Applica la maschera per le label
         existing_labels_cols_group = [col for col in labels_columns_for_mask_group if col in df_group_final_wide.columns]
         if not existing_labels_cols_group: continue # Non dovrebbe succedere
 
@@ -121,10 +105,6 @@ def get_features_for_each_sensor_optimized(df_data_input, positions_list):
 
     return final_combined_df.dropna()
 
-
-# In[ ]:
-
-
 def duplicaRighePesi(df_moved, weight): #solo per varianza
     if df_moved.empty: return df_moved
     df_moved['is_original'] = True
@@ -139,10 +119,6 @@ def duplicaRighePesi(df_moved, weight): #solo per varianza
     df_moved = df_moved.drop('is_original', axis=1, errors='ignore')
     return df_moved
 
-
-# In[ ]:
-
-
 def get_train_test_data(df_data_input, user=None, random_state=42, weight = -1, varianza = False, 
                         features_list=None, all_positions_list=None, row_to_move = 0):
 
@@ -154,8 +130,6 @@ def get_train_test_data(df_data_input, user=None, random_state=42, weight = -1, 
         df_test  = get_features_for_each_sensor_optimized(df_test[features_list + ['position', 'label', 'Userid','Activity']], all_positions_list)
     df_sampling_pool, df_testFISSO = train_test_split(df_test, test_size=0.2, random_state=random_state,stratify=df_test['label'])
 
-    #sposto le righe
-    num_to_move = 0
     moved_indices = []
     if row_to_move > 0:
         for label_value in df_sampling_pool['label'].unique():
@@ -183,14 +157,9 @@ def get_train_test_data(df_data_input, user=None, random_state=42, weight = -1, 
 
     return X_train, X_test, y_train, y_test, total_rows_moved
 
-
-# In[ ]:
-
-
 def train_model(X_train, X_test, y_train, random_state, dove_peso, RFT):
     class_weights = compute_sample_weight(class_weight='balanced', y=y_train)
     final_sample_weights = dove_peso * class_weights
-
     if RFT:
         xgb = RandomForestClassifier( n_estimators=150, random_state=random_state, n_jobs=-1)
     else:
@@ -199,9 +168,6 @@ def train_model(X_train, X_test, y_train, random_state, dove_peso, RFT):
     y_pred = xgb.predict(X_test)
 
     return y_pred
-
-
-# In[ ]:
 
 
 def process_single_random_state(rand_state, current_position_list, df_data_arg, weight_list_arg,
@@ -256,15 +222,14 @@ def process_single_random_state(rand_state, current_position_list, df_data_arg, 
 
         return crowd_results
     else:
+        minimo_gruppo = df_position.groupby(['Userid', 'label', 'position']).size().min()
+        minimo_disponibile = math.floor(minimo_gruppo * 0.8)
         for peso_arg in weight_list_arg:
-            for minuti_nuovo_train_arg in lista_minuti_arg:
-                minimo_gruppo = df_position.groupby(['Userid', 'label', 'position']).size().min()
-                minimo_disponibile = math.floor(minimo_gruppo * 0.8)
-                target_n_total = 1 + (minuti_nuovo_train_arg * 60 - ROW_TIME_arg) / (ROW_TIME_arg * (1 - OVERLAP_arg))
-                target_n_total = math.ceil(target_n_total)
-                num_labels = df_position['label'].nunique()
-                num_ideale_per_classe = math.ceil(target_n_total / num_labels)
-                final_num_to_move = min(num_ideale_per_classe, minimo_disponibile)
+            for secondi_nuovo_train_arg in lista_minuti_arg:
+                target_n_total = 1 + (secondi_nuovo_train_arg - ROW_TIME_arg) / (ROW_TIME_arg * (1 - OVERLAP_arg))
+                num_ideale_per_classe = max(1, target_n_total)
+                final_num_to_move = int(min(num_ideale_per_classe, minimo_disponibile))
+                tempoEffettivo = ROW_TIME_arg * (1 + (final_num_to_move - 1) * (1 - OVERLAP_arg))
 
                 results_this_minute_all_k = []
                 for k_user in df_position['Userid'].unique():
@@ -291,10 +256,6 @@ def process_single_random_state(rand_state, current_position_list, df_data_arg, 
                     y_pred = train_model(X_train, X_test, y_train, random_state=rand_state,dove_peso=sample_weight, RFT=RFT)
                     end = time.perf_counter()
                     durata = end - start
-
-                    tempoEffettivo = ROW_TIME_arg * (1 + (num_dati_spostati - 1) * (1 - OVERLAP_arg))
-                    tempoEffettivo = round(tempoEffettivo / 10) * 10
-
 
                     if len(y_test) == 0 or len(y_pred) == 0:
                         print("errore che non vuoi avere") #crasha tutto
@@ -328,10 +289,6 @@ def process_single_random_state(rand_state, current_position_list, df_data_arg, 
 
         return single_state_results
 
-
-# In[ ]:
-
-
 def k_fold_cross_validation_parallel(
     position_list_arg,
     df_data_arg,
@@ -340,7 +297,7 @@ def k_fold_cross_validation_parallel(
     random_state_list_global=None,
     ROW_TIME_global=None,
     OVERLAP_global=None,
-    minute_list_global=None,
+    seconds_list_global=None,
     RFT = False
     ):
 
@@ -352,7 +309,7 @@ def k_fold_cross_validation_parallel(
             position_list_arg,
             df_data_arg,
             weight_list_param,
-            minute_list_global,
+            seconds_list_global,
             varianza_param,
             ROW_TIME_global,
             OVERLAP_global,
@@ -363,13 +320,9 @@ def k_fold_cross_validation_parallel(
 
     return pd.DataFrame(all_results_list)
 
-
-# In[ ]:
-
-
-RANDOM_STATE_LIST = [1]
-MINUTE_LIST = [1,5]
-WEIGHT_LIST = [1,5,25]
+RANDOM_STATE_LIST = [int(i*10) for i in range(1,11)]
+SECONDS_LIST = [20]
+WEIGHT_LIST = [1,5,50,100,500,1000]
 OVERLAP = 0.5
 ROW_TIME = 4
 SAVE = True
@@ -378,11 +331,7 @@ COMBINED_POSITIONS = False
 DATASET = sys.argv[1]
 print(f"ESECUZIONE DATASET {DATASET}")
 
-if DATASET == 'MultiPositionWearable':
-  NOMI_FILE = {
-    'cartella_dati': 'MultiPositionWearable_processed_data'
-  }
-elif DATASET == 'selfBACK':
+if DATASET == 'selfBACK':
   NOMI_FILE = {
     'cartella_dati': 'selfBACK_processed_data'
   }
@@ -426,12 +375,7 @@ if len(all_files) - len(file_list) > 0:
   df_data_combined, labels_activity_names_combined = set_labels(df_data_combined)
   df_data_combined = strip_Spaces(df_data_combined)
 
-
-# ## BASELINE XGB
-
-# In[ ]:
-
-
+print("baseline XGB")
 list_df_baseline_parts = []
 
 all_available_positions_from_df = list(df_data['position'].unique())
@@ -448,7 +392,7 @@ if len(all_available_positions_from_df) > 1:
     df_all_sensors_model = k_fold_cross_validation_parallel(
         position_list, data,
         random_state_list_global=RANDOM_STATE_LIST, ROW_TIME_global=ROW_TIME,
-        OVERLAP_global=OVERLAP, minute_list_global=MINUTE_LIST
+        OVERLAP_global=OVERLAP, seconds_list_global=SECONDS_LIST
     )
 
     list_df_baseline_parts.append(df_all_sensors_model)
@@ -457,18 +401,13 @@ for pos_single in all_available_positions_from_df:
     df_pos_single_baseline = k_fold_cross_validation_parallel(
         [pos_single], df_data, 
         random_state_list_global=RANDOM_STATE_LIST, ROW_TIME_global=ROW_TIME,
-        minute_list_global=MINUTE_LIST
+        seconds_list_global=SECONDS_LIST
     )
     list_df_baseline_parts.append(df_pos_single_baseline)
 
 pesoBaseData = pd.concat(list_df_baseline_parts, ignore_index=True)
 
-
-# ## BASELINE RFT
-
-# In[ ]:
-
-
+print("baseline RFT")
 list_df_baseline_parts_RFT = []
 
 if len(all_available_positions_from_df) > 1:
@@ -483,7 +422,7 @@ if len(all_available_positions_from_df) > 1:
     df_all_sensors_model = k_fold_cross_validation_parallel(
         position_list, data,
         random_state_list_global=RANDOM_STATE_LIST, ROW_TIME_global=ROW_TIME,
-        OVERLAP_global=OVERLAP, minute_list_global=MINUTE_LIST, RFT = True
+        OVERLAP_global=OVERLAP, seconds_list_global=SECONDS_LIST, RFT = True
     )
 
     list_df_baseline_parts_RFT.append(df_all_sensors_model)
@@ -492,17 +431,13 @@ for pos_single in all_available_positions_from_df:
     df_pos_single_baseline = k_fold_cross_validation_parallel(
         [pos_single], df_data, 
         random_state_list_global=RANDOM_STATE_LIST, ROW_TIME_global=ROW_TIME,
-        minute_list_global=MINUTE_LIST, RFT = True
+        seconds_list_global=SECONDS_LIST, RFT = True
     )
     list_df_baseline_parts_RFT.append(df_pos_single_baseline)
 
 pesoBaseData_RFT = pd.concat(list_df_baseline_parts_RFT, ignore_index=True)
 
-
-# ## BASE XGB
-
-# In[ ]:
-
+print("base XGB")
 
 list_df_model_base_parts = []
 
@@ -519,7 +454,7 @@ if len(all_available_positions_from_df) > 1:
         position_list, data,
         weight_list_param=WEIGHT_LIST,
         random_state_list_global=RANDOM_STATE_LIST, ROW_TIME_global=ROW_TIME,
-        OVERLAP_global=OVERLAP, minute_list_global=MINUTE_LIST
+        OVERLAP_global=OVERLAP, seconds_list_global=SECONDS_LIST
     )
 
     list_df_model_base_parts.append(df_all_sensors_model)
@@ -530,17 +465,13 @@ for pos_single in all_available_positions_from_df:
         [pos_single], df_data,
         weight_list_param=WEIGHT_LIST,
         random_state_list_global=RANDOM_STATE_LIST, ROW_TIME_global=ROW_TIME,
-        OVERLAP_global=OVERLAP, minute_list_global=MINUTE_LIST
+        OVERLAP_global=OVERLAP, seconds_list_global=SECONDS_LIST
     )
     list_df_model_base_parts.append(df_pos_single_model)
 
 baseData = pd.concat(list_df_model_base_parts, ignore_index=True)
 
-
-# ## BASE RFT
-
-# In[ ]:
-
+print("base RFT")
 
 list_df_model_base_parts_RFT = []
 
@@ -557,7 +488,7 @@ if len(all_available_positions_from_df) > 1:
         position_list, data,
         weight_list_param=WEIGHT_LIST,
         random_state_list_global=RANDOM_STATE_LIST, ROW_TIME_global=ROW_TIME,
-        OVERLAP_global=OVERLAP, minute_list_global=MINUTE_LIST, RFT = True
+        OVERLAP_global=OVERLAP, seconds_list_global=SECONDS_LIST, RFT = True
     )
 
     list_df_model_base_parts_RFT.append(df_all_sensors_model)
@@ -568,17 +499,13 @@ for pos_single in all_available_positions_from_df:
         [pos_single], df_data,
         weight_list_param=WEIGHT_LIST,
         random_state_list_global=RANDOM_STATE_LIST, ROW_TIME_global=ROW_TIME,
-        OVERLAP_global=OVERLAP, minute_list_global=MINUTE_LIST, RFT = True
+        OVERLAP_global=OVERLAP, seconds_list_global=SECONDS_LIST, RFT = True
     )
     list_df_model_base_parts_RFT.append(df_pos_single_model)
 
 baseData_RFT = pd.concat(list_df_model_base_parts_RFT, ignore_index=True)
 
-
-# ## VARIANZA XGB
-
-# In[ ]:
-
+print("varianza XGB")
 
 list_df_model_varianza_parts = []
 
@@ -594,7 +521,7 @@ if len(all_available_positions_from_df) > 1:
         position_list, data,
         weight_list_param=WEIGHT_LIST, varianza_param=True,
         random_state_list_global=RANDOM_STATE_LIST, ROW_TIME_global=ROW_TIME,
-        OVERLAP_global=OVERLAP, minute_list_global=MINUTE_LIST
+        OVERLAP_global=OVERLAP, seconds_list_global=SECONDS_LIST
     )
     list_df_model_varianza_parts.append(df_all_sensors_model)
 
@@ -603,17 +530,13 @@ for pos_single in all_available_positions_from_df:
         [pos_single], df_data,
         weight_list_param=WEIGHT_LIST, varianza_param=True,
         random_state_list_global=RANDOM_STATE_LIST, ROW_TIME_global=ROW_TIME,
-        OVERLAP_global=OVERLAP, minute_list_global=MINUTE_LIST
+        OVERLAP_global=OVERLAP, seconds_list_global=SECONDS_LIST
     )
     list_df_model_varianza_parts.append(df_pos_single_varianza)
 
 varianzaData = pd.concat(list_df_model_varianza_parts, ignore_index=True)
 
-
-# ## VARIANZA RFT
-
-# In[ ]:
-
+print("varianza RFT")
 
 list_df_model_varianza_parts_RFT = []
 if len(all_available_positions_from_df) > 1:
@@ -628,7 +551,7 @@ if len(all_available_positions_from_df) > 1:
         position_list, data,
         weight_list_param=WEIGHT_LIST, varianza_param=True,
         random_state_list_global=RANDOM_STATE_LIST, ROW_TIME_global=ROW_TIME,
-        OVERLAP_global=OVERLAP, minute_list_global=MINUTE_LIST, RFT = True
+        OVERLAP_global=OVERLAP, seconds_list_global=SECONDS_LIST, RFT = True
     )
     list_df_model_varianza_parts_RFT.append(df_all_sensors_model)
 
@@ -637,23 +560,13 @@ for pos_single in all_available_positions_from_df:
         [pos_single], df_data,
         weight_list_param=WEIGHT_LIST, varianza_param=True,
         random_state_list_global=RANDOM_STATE_LIST, ROW_TIME_global=ROW_TIME,
-        OVERLAP_global=OVERLAP, minute_list_global=MINUTE_LIST, RFT = True
+        OVERLAP_global=OVERLAP, seconds_list_global=SECONDS_LIST, RFT = True
     )
     list_df_model_varianza_parts_RFT.append(df_pos_single_varianza)
 
 varianzaData_RFT = pd.concat(list_df_model_varianza_parts_RFT, ignore_index=True)
 
-
-# # GRAFICI
-
-# In[ ]:
-
-
 MYPATH = os.getcwd() + '/data/data_total/'
-
-
-# In[ ]:
-
 
 df_list = []
 
@@ -679,10 +592,6 @@ PESI = sorted(df_all_data['weight'].unique())
 df_baseline = pesoBaseData
 df_baseline_RFT = pesoBaseData_RFT
 
-
-# In[ ]:
-
-
 def format_seconds_to_minutes(val,pos):
     if val < 60:
         return f"{val:.0f} sec"
@@ -691,8 +600,13 @@ def format_seconds_to_minutes(val,pos):
         seconds = int(val % 60)
         return f"{minutes}:{seconds:02d} min"
 
+min_f1_abs = min(
+    df_baseline.groupby('position')['f1-score'].mean().min(),
+    df_baseline_RFT.groupby('position')['f1-score'].mean().min(),
+    df_all_data.groupby(['position', 'weight', 'dataset', 'timeUsed'])['f1-score'].mean().min()
+)
 
-# In[ ]:
+max_f1_abs = df_all_data.groupby(['position', 'weight', 'dataset', 'timeUsed'])['f1-score'].mean().max()
 
 
 for position_to_plot in df_all_data['position'].unique():
@@ -729,14 +643,14 @@ for position_to_plot in df_all_data['position'].unique():
     )
 
     if np.isfinite(baseline_f1_value):
-        ax1.axhline(y=baseline_f1_value, color='black', linestyle=':', linewidth=2, 
-                    label=f'Baseline F1 ({baseline_f1_value:.3f})')
-        ax1.axhline(y=baseline_f1_value_RFT, color='black', linestyle=':', linewidth=2, 
-                    label=f'Baseline F1 ({baseline_f1_value_RFT:.3f})')
+        ax1.axhline(y=baseline_f1_value, color='blue', linestyle=':', linewidth=2, 
+                    label=f'Baseline XGB({baseline_f1_value:.3f})')
+        ax1.axhline(y=baseline_f1_value_RFT, color='orange', linestyle=':', linewidth=2, 
+                    label=f'Baseline RFT({baseline_f1_value_RFT:.3f})')
 
     ax1.set_ylabel('f1-score', color='tab:blue', fontsize=14)
-    baseline_min = min(baseline_f1_value,baseline_f1_value_RFT)
-    ax1.set_ylim(baseline_min-0.01, 1.01)
+
+    ax1.set_ylim(min_f1_abs, max_f1_abs)
     ax1.tick_params(axis='y', labelcolor='tab:blue')
     ax1.grid(True, which='major', axis='y', linestyle='--', linewidth=0.5)
     ax1.yaxis.set_major_locator(ticker.MultipleLocator(0.05))
@@ -759,4 +673,3 @@ for position_to_plot in df_all_data['position'].unique():
     output_path = os.path.join(output_dir, f'plot_{position_to_plot}.png')
     plt.savefig(output_path, dpi=150)
     plt.close(fig)
-

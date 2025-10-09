@@ -2,7 +2,7 @@
 ## Motivazione scelta del modello XGB rispetto al modello RFT - OUTDATED
 Far partire il file `Difference_XGB_RFT.py` tramite il comando (in questo caso io ho usato powershell)
 ```powershell
-foreach ($DATASET in "MultiPositionWearable", "selfBACK", "SDALLE") {
+foreach ($DATASET in "selfBACK", "SDALLE") {
     python Difference_XGB_RFT.py $DATASET
 }
 ```
@@ -16,7 +16,7 @@ Nel caso si vogliano modificare i parametri, modificare:
 ## Motivazione scelta di pesare una riga rispetto a moltiplicarla N volte - OUTDATED
 Far partire il file `Difference_MUL_PESO.py` tramite il comando (in questo caso io ho usato powershell)
 ```powershell
-foreach ($DATASET in "MultiPositionWearable", "selfBACK", "SDALLE") {
+foreach ($DATASET in "selfBACK", "SDALLE") {
     python Difference_XGB_RFT.py $DATASET
 }
 ```

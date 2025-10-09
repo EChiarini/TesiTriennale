@@ -1,5 +1,2 @@
-data
-images
-!SetUpData.ipynb
-!AllCreateModelsInOneFile.ipynb
-!DisplayResults.ipynb
+data*
+images*
