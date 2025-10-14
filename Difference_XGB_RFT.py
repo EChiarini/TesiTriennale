@@ -648,28 +648,33 @@ for position_to_plot in df_all_data['position'].unique():
         ax1.axhline(y=baseline_f1_value_RFT, color='orange', linestyle=':', linewidth=2, 
                     label=f'Baseline RFT({baseline_f1_value_RFT:.3f})')
 
-    ax1.set_ylabel('f1-score', color='tab:blue', fontsize=14)
+    ax1.set_ylabel('F1-Score', color='tab:blue', fontsize=24)
 
     ax1.set_ylim(min_f1_abs, max_f1_abs)
     ax1.tick_params(axis='y', labelcolor='tab:blue')
     ax1.grid(True, which='major', axis='y', linestyle='--', linewidth=0.5)
     ax1.yaxis.set_major_locator(ticker.MultipleLocator(0.05))
 
-    ax1.set_xlabel("Peso (Weight)", fontsize=14)
+    ax1.set_xlabel("Weight", fontsize=24)
     ax1.set_xscale('log')
     ax1.set_xticks(PESI)
     ax1.set_xticklabels(PESI)
     ax1.grid(True, which='both', axis='x', linestyle='--', linewidth=0.5, alpha=0.4)
 
-    handles, labels = ax1.get_legend_handles_labels()
-    ax1.legend(handles, labels, title='Modello / TimeUsed', loc='best')
 
-    plt.title(f'Posizione: {position_to_plot}', fontsize=18, pad=20)
+
+    for container in ax1.containers:
+        ax1.bar_label(padding=3, fontsize=20)
+
+    handles, labels = ax1.get_legend_handles_labels()
+    ax1.legend(handles, labels, title='Modello / TimeUsed', loc='best', fontsize=16, title_fontsize=18)
+
+    plt.title(f'Position: {position_to_plot}', fontsize=28, pad=20)
 
     fig.tight_layout()
 
     output_dir = os.path.join(os.getcwd(), 'images','diff_xgb_rft', DATASET)
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, f'plot_{position_to_plot}.png')
-    plt.savefig(output_path, dpi=150)
+    plt.savefig(output_path, dpi=400)
     plt.close(fig)
