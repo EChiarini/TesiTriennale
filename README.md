@@ -17,7 +17,7 @@ Nel caso si vogliano modificare i parametri, modificare:
 Far partire il file `Difference_MUL_PESO.py` tramite il comando (in questo caso io ho usato powershell)
 ```powershell
 foreach ($DATASET in "selfBACK", "SDALLE") {
-    python Difference_XGB_RFT.py $DATASET
+    python Difference_MUL_PESO.py $DATASET
 }
 ```
 I risultati della comparazione saranno visibili nella cartella `/images/diff_peso_mul/NOME_DATASET/plot_X.png`  
